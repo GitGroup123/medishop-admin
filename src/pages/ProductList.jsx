@@ -10,7 +10,7 @@ export default function ProductList() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/products");
+        const res = await axios.get("https://medishop-backend-rqfh.onrender.com/api/products");
         setProducts(res.data);
       } catch (err) {
         console.error("Failed to fetch products", err);
@@ -19,7 +19,7 @@ export default function ProductList() {
 
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/categories");
+        const res = await axios.get("https://medishop-backend-rqfh.onrender.com/api/categories");
         const map = {};
         res.data.forEach((cat) => {
           map[cat._id] = cat.name;
@@ -37,7 +37,7 @@ export default function ProductList() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
     try {
-      await axios.delete(`http://localhost:8080/api/products/${id}`);
+      await axios.delete(`https://medishop-backend-rqfh.onrender.com/api/products/${id}`);
       setProducts((prev) => prev.filter((p) => p._id !== id));
     } catch (err) {
       console.error("Delete failed:", err);

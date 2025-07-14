@@ -28,19 +28,19 @@ export default function EditProduct() {
   const [variations, setVariations] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/categories")
+    fetch("https://medishop-backend-rqfh.onrender.com/api/categories")
       .then((res) => res.json())
       .then((data) => setCategories(data));
 
-    fetch("http://localhost:8080/api/tags")
+    fetch("https://medishop-backend-rqfh.onrender.com/api/tags")
       .then((res) => res.json())
       .then((data) => setTags(data));
 
-    fetch("http://localhost:8080/api/attributes")
+    fetch("https://medishop-backend-rqfh.onrender.com/api/attributes")
       .then((res) => res.json())
       .then((data) => setAttributes(data));
 
-    fetch(`http://localhost:8080/api/products/${id}`)
+    fetch(`https://medishop-backend-rqfh.onrender.com/api/products/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setProductName(data.name);
@@ -113,7 +113,7 @@ export default function EditProduct() {
 
 
     try {
-      const res = await fetch(`http://localhost:8080/api/products/${id}`, {
+      const res = await fetch(`https://medishop-backend-rqfh.onrender.com/api/products/${id}`, {
         method: "PUT",
         body: formData,
       });
@@ -313,7 +313,7 @@ console.log("selectedAttributes", selectedAttributes);
         const existing = tags.find((t) => t.name.toLowerCase() === searchTag.toLowerCase());
         if (!existing) {
           try {
-            const res = await fetch("http://localhost:8080/api/tags", {
+            const res = await fetch("https://medishop-backend-rqfh.onrender.com/api/tags", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({

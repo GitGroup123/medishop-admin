@@ -96,17 +96,17 @@ useEffect(() => {
 
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/categories")
+    fetch("https://medishop-backend-rqfh.onrender.com/api/categories")
       .then((res) => res.json())
       .then((data) => setCategories(data))
       .catch((err) => console.error("Failed to fetch categories", err));
 
-    fetch("http://localhost:8080/api/tags")
+    fetch("https://medishop-backend-rqfh.onrender.com/api/tags")
       .then((res) => res.json())
       .then((data) => setTags(data))
       .catch((err) => console.error("Failed to fetch tags", err));
 
-    fetch("http://localhost:8080/api/attributes")
+    fetch("https://medishop-backend-rqfh.onrender.com/api/attributes")
       .then((res) => res.json())
       .then((data) => setAttributes(data))
       .catch((err) => console.error("Failed to fetch attributes", err));
@@ -115,7 +115,7 @@ useEffect(() => {
   const handleAddCategory = async () => {
     if (!newCategoryName.trim()) return;
     try {
-      const res = await fetch("http://localhost:8080/api/categories", {
+      const res = await fetch("https://medishop-backend-rqfh.onrender.com/api/categories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newCategoryName, slug: newCategoryName.toLowerCase().replace(/\s+/g, "-") }),
@@ -135,7 +135,7 @@ useEffect(() => {
   const handleAddTag = async () => {
     if (!newTagName.trim()) return;
     try {
-      const res = await fetch("http://localhost:8080/api/tags", {
+      const res = await fetch("https://medishop-backend-rqfh.onrender.com/api/tags", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newTagName, slug: newTagName.toLowerCase().replace(/\s+/g, "-") }),
@@ -205,7 +205,7 @@ useEffect(() => {
 console.log("📦 Submitting variations:", variations);
 
     try {
-      const res = await fetch("http://localhost:8080/api/products", {
+      const res = await fetch("https://medishop-backend-rqfh.onrender.com/api/products", {
         method: "POST",
         body: formData,
       });
@@ -666,7 +666,7 @@ console.log("📦 Submitting variations:", variations);
                 const existing = tags.find((t) => t.name.toLowerCase() === searchTag.toLowerCase());
                 if (!existing) {
                   try {
-                    const res = await fetch("http://localhost:8080/api/tags", {
+                    const res = await fetch("https://medishop-backend-rqfh.onrender.com/api/tags", {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({

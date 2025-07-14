@@ -9,13 +9,13 @@ export default function Categories() {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/categories')
+    fetch('https://medishop-backend-rqfh.onrender.com/api/categories')
       .then((res) => res.json())
       .then(setCategories);
   }, []);
 
   const refreshCategories = async () => {
-    const res = await fetch('http://localhost:8080/api/categories');
+    const res = await fetch('https://medishop-backend-rqfh.onrender.com/api/categories');
     const data = await res.json();
     setCategories(data);
   };
@@ -35,8 +35,8 @@ export default function Categories() {
 
       const res = await fetch(
         selectedId
-          ? `http://localhost:8080/api/categories/${selectedId}`
-          : 'http://localhost:8080/api/categories',
+          ? `https://medishop-backend-rqfh.onrender.com/api/categories/${selectedId}`
+          : 'https://medishop-backend-rqfh.onrender.com/api/categories',
         {
           method: selectedId ? 'PUT' : 'POST',
           body: formData,
@@ -74,7 +74,7 @@ export default function Categories() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
     try {
-      const res = await fetch(`http://localhost:8080/api/categories/${id}`, {
+      const res = await fetch(`https://medishop-backend-rqfh.onrender.com/api/categories/${id}`, {
         method: "DELETE"
       });
       console.log('Delete response status:', res.status);
@@ -142,7 +142,7 @@ export default function Categories() {
             />
             {image && typeof image === 'string' && (
               <img
-                src={`http://localhost:8080/${image.replace(/^\/+/, '')}`}
+                src={`https://medishop-backend-rqfh.onrender.com/${image.replace(/^\/+/, '')}`}
                 alt="Selected"
                 className="w-20 h-20 object-cover mt-2 border rounded"
               />
@@ -183,7 +183,7 @@ export default function Categories() {
                 <div className="flex items-center gap-4">
                   {cat.image && (
                     <img
-                      src={`http://localhost:8080/${cat.image.replace(/^\/+/, '')}`}
+                      src={`https://medishop-backend-rqfh.onrender.com/${cat.image.replace(/^\/+/, '')}`}
                       alt={cat.name}
                       className="w-14 h-14 object-cover rounded border border-gray-300"
                     />

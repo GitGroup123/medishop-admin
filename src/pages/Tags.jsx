@@ -7,7 +7,7 @@ export default function Tags() {
 
   const fetchTags = async () => {
     try {
-      const res = await fetch("http://localhost:8080/api/tags");
+      const res = await fetch("https://medishop-backend-rqfh.onrender.com/api/tags");
       const data = await res.json();
       setTags(data);
     } catch (err) {
@@ -24,7 +24,7 @@ export default function Tags() {
 
     for (const tag of tagNames) {
       try {
-        const res = await fetch("http://localhost:8080/api/tags", {
+        const res = await fetch("https://medishop-backend-rqfh.onrender.com/api/tags", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -52,7 +52,7 @@ export default function Tags() {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`http://localhost:8080/api/tags/${id}`, {
+      const res = await fetch(`https://medishop-backend-rqfh.onrender.com/api/tags/${id}`, {
         method: "DELETE",
       });
       if (res.ok) {

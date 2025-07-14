@@ -11,7 +11,7 @@ const Attributes = () => {
   useEffect(() => {
     const fetchAttributes = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/attributes");
+        const res = await axios.get("https://medishop-backend-rqfh.onrender.com/api/attributes");
         const withValues = res.data.map(attr => ({
           ...attr,
           values: attr.values || []
@@ -27,7 +27,7 @@ const Attributes = () => {
   const handleAddAttribute = async () => {
     if (!newAttribute.trim()) return;
     try {
-      const res = await axios.post("http://localhost:8080/api/attributes", {
+      const res = await axios.post("https://medishop-backend-rqfh.onrender.com/api/attributes", {
         name: newAttribute,
         values: []
       });
@@ -43,7 +43,7 @@ const Attributes = () => {
     if (!value.trim()) return;
     try {
       console.log("Adding value:", value, "to attribute ID:", attrId);
-      const res = await axios.post(`http://localhost:8080/api/attributes/${attrId}/values`, { values: [value] });
+      const res = await axios.post(`https://medishop-backend-rqfh.onrender.com/api/attributes/${attrId}/values`, { values: [value] });
       console.log("Value added response:", res.data);
       const updatedAttributes = attributes.map((attr) =>
         attr._id === attrId ? { ...attr, values: res.data.values } : attr
@@ -57,7 +57,7 @@ const Attributes = () => {
 
   const handleDeleteAttribute = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/api/attributes/${id}`);
+      await axios.delete(`https://medishop-backend-rqfh.onrender.com/api/attributes/${id}`);
       setAttributes(attributes.filter((attr) => attr._id !== id));
     } catch (err) {
       console.error("Failed to delete attribute:", err);
@@ -66,7 +66,7 @@ const Attributes = () => {
 
   const handleDeleteValue = async (attrId, value) => {
     try {
-      const res = await axios.delete(`http://localhost:8080/api/attributes/${attrId}/values`, {
+      const res = await axios.delete(`https://medishop-backend-rqfh.onrender.com/api/attributes/${attrId}/values`, {
         data: { value }
       });
       const updatedAttributes = attributes.map((attr) =>
