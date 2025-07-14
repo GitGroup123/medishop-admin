@@ -12,7 +12,6 @@ export default function NewProduct() {
   const [selectedAttributes, setSelectedAttributes] = useState([]);
   const [newTagName, setNewTagName] = useState("");
   const [searchAttribute, setSearchAttribute] = useState("");
-  const [hasGenerated, setHasGenerated] = useState(false); 
   const [searchTag, setSearchTag] = useState("");
 
   // Add for attribute generation toggle
@@ -53,36 +52,61 @@ const generateCombinations = (groups) => {
 };
 const combinations = generateCombinations(attributeGroups);
 useEffect(() => {
-  if (combinations.length > 0 && !hasGenerated) {
-    const initialVariants = combinations.map((combo) => ({
-      attributes: Object.fromEntries(combo.map((c) => [c.name, c.value])),
-      sku: "",
-      price: "",
-      salePrice: "",
-      stock: "",
-      stockStatus: "in_stock",
-      image: null,
+  const attributeGroups = selectedAttributes
+    .filter((attr) => attr.values.length > 0)
+    .map((attr) => ({
+      name: attr.name,  
+      values: attr.values
     }));
-    setVariations(initialVariants);
-    setHasGenerated(true); // 🧠 don't re-generate unless user resets
-  }
-}, [combinations, hasGenerated]);
+
+  const generateCombinations = (groups) => {
+    if (groups.length === 0) return [];
+    return groups.reduce((acc, group) => {
+      const temp = [];
+      group.values.forEach((value) => {
+        if (acc.length === 0) {
+          temp.push([{ name: group.name, value }]);
+        } else {
+          acc.forEach((combo) => {
+            temp.push([...combo, { name: group.name, value }]);
+          });
+        }
+      });
+      return temp;
+    }, []);
+  };
+
+  const combos = generateCombinations(attributeGroups);
+
+  const newVariants = combos.map((combo) => ({
+    attributes: Object.fromEntries(combo.map((c) => [c.name, c.value])),
+    sku: "",
+    price: "",
+    salePrice: "",
+    stock: "",
+    stockStatus: "in_stock",
+    image: null,
+  }));
+
+  setVariations(newVariants);
+}, [selectedAttributes]);
+
 
 
 
 
   useEffect(() => {
-    fetch("https://medishop-backend-rqfh.onrender.com/api/categories")
+    fetch("http://localhost:8080/api/categories")
       .then((res) => res.json())
       .then((data) => setCategories(data))
       .catch((err) => console.error("Failed to fetch categories", err));
 
-    fetch("https://medishop-backend-rqfh.onrender.com/api/tags")
+    fetch("http://localhost:8080/api/tags")
       .then((res) => res.json())
       .then((data) => setTags(data))
       .catch((err) => console.error("Failed to fetch tags", err));
 
-    fetch("https://medishop-backend-rqfh.onrender.com/api/attributes")
+    fetch("http://localhost:8080/api/attributes")
       .then((res) => res.json())
       .then((data) => setAttributes(data))
       .catch((err) => console.error("Failed to fetch attributes", err));
@@ -91,7 +115,7 @@ useEffect(() => {
   const handleAddCategory = async () => {
     if (!newCategoryName.trim()) return;
     try {
-      const res = await fetch("https://medishop-backend-rqfh.onrender.com/api/categories", {
+      const res = await fetch("http://localhost:8080/api/categories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newCategoryName, slug: newCategoryName.toLowerCase().replace(/\s+/g, "-") }),
@@ -111,7 +135,7 @@ useEffect(() => {
   const handleAddTag = async () => {
     if (!newTagName.trim()) return;
     try {
-      const res = await fetch("https://medishop-backend-rqfh.onrender.com/api/tags", {
+      const res = await fetch("http://localhost:8080/api/tags", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: newTagName, slug: newTagName.toLowerCase().replace(/\s+/g, "-") }),
@@ -129,6 +153,17 @@ useEffect(() => {
   };
 
   const handleSaveProduct = async () => {
+      if (!productName.trim()) return alert("Product name is required.");
+  if (!shortDesc.trim()) return alert("Short description is required.");
+   if (!price || isNaN(price) || Number(price) <= 0)
+    return alert("Regular price must be a valid positive number.");
+  if (salePrice && Number(salePrice) > Number(price))
+    return alert("Sale price must be less than or equal to the regular price.");
+  if (!productImage) return alert("Product image is required.");
+  if (selectedCategories.length === 0)
+    return alert("Please select at least one category.");
+  if (!detailedDesc.trim()) return alert("Detailed description is required.");
+ 
     console.log("Saving product...");
     const formData = new FormData();
     formData.append("name", productName);
@@ -170,7 +205,7 @@ useEffect(() => {
 console.log("📦 Submitting variations:", variations);
 
     try {
-      const res = await fetch("https://medishop-backend-rqfh.onrender.com/api/products", {
+      const res = await fetch("http://localhost:8080/api/products", {
         method: "POST",
         body: formData,
       });
@@ -193,50 +228,55 @@ console.log("📦 Submitting variations:", variations);
       <div className="w-full md:w-[70%] space-y-4">
         <div className="bg-white p-6 rounded shadow">
           {/* Tabs */}
-          <div className="flex space-x-4 border-b mb-4">
-            <button
-              className={`pb-2 px-3 border-b-2 font-medium ${
-                activeTab === "basic"
-                  ? "border-[#bb4430] text-[#bb4430]"
-                  : "border-transparent text-gray-500"
-              }`}
-              onClick={() => setActiveTab("basic")}
-            >
-              Basic Info
-            </button>
-            <button
-              className={`pb-2 px-3 border-b-2 font-medium ${
-                activeTab === "attributes"
-                  ? "border-[#bb4430] text-[#bb4430]"
-                  : "border-transparent text-gray-500"
-              }`}
-              onClick={() => setActiveTab("attributes")}
-            >
-              Attributes
-            </button>
-            {productType === "variable" && (
-              <button
-                className={`pb-2 px-3 border-b-2 font-medium ${
-                  activeTab === "variants"
-                    ? "border-[#bb4430] text-[#bb4430]"
-                    : "border-transparent text-gray-500"
-                }`}
-                onClick={() => setActiveTab("variants")}
-              >
-                Configure Variants
-              </button>
-            )}
-            <button
-              className={`pb-2 px-3 border-b-2 font-medium ${
-                activeTab === "description"
-                  ? "border-[#bb4430] text-[#bb4430]"
-                  : "border-transparent text-gray-500"
-              }`}
-              onClick={() => setActiveTab("description")}
-            >
-              Detailed Description
-            </button>
-          </div>
+      <div className="flex space-x-4 border-b mb-4">
+  <button
+    className={`pb-2 px-3 border-b-2 font-medium ${
+      activeTab === "basic"
+        ? "border-[#bb4430] text-[#bb4430]"
+        : "border-transparent text-gray-500"
+    }`}
+    onClick={() => setActiveTab("basic")}
+  >
+    Basic Info
+  </button>
+
+  {productType === "variable" && (
+    <button
+      className={`pb-2 px-3 border-b-2 font-medium ${
+        activeTab === "attributes"
+          ? "border-[#bb4430] text-[#bb4430]"
+          : "border-transparent text-gray-500"
+      }`}
+      onClick={() => setActiveTab("attributes")}
+    >
+      Attributes
+    </button>
+  )}
+
+  {productType === "variable" && selectedAttributes.length > 0 && (
+    <button
+      className={`pb-2 px-3 border-b-2 font-medium ${
+        activeTab === "variants"
+          ? "border-[#bb4430] text-[#bb4430]"
+          : "border-transparent text-gray-500"
+      }`}
+      onClick={() => setActiveTab("variants")}
+    >
+      Configure Variants
+    </button>
+  )}
+
+  <button
+    className={`pb-2 px-3 border-b-2 font-medium ${
+      activeTab === "description"
+        ? "border-[#bb4430] text-[#bb4430]"
+        : "border-transparent text-gray-500"
+    }`}
+    onClick={() => setActiveTab("description")}
+  >
+    Detailed Description
+  </button>
+</div>
 
           {/* Tab Content */}
           {activeTab === "basic" && (
@@ -626,7 +666,7 @@ console.log("📦 Submitting variations:", variations);
                 const existing = tags.find((t) => t.name.toLowerCase() === searchTag.toLowerCase());
                 if (!existing) {
                   try {
-                    const res = await fetch("https://medishop-backend-rqfh.onrender.com/api/tags", {
+                    const res = await fetch("http://localhost:8080/api/tags", {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({
